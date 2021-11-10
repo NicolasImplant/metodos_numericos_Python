@@ -57,3 +57,29 @@ x(0) = 0; dx/dt(0) = 0; d^2x/dt^2(0) = 1; Metodo de solución: Punto Medio.
 Modelo epidemiologico SIRD (Suceptibles, infectados, recuperados, fallecidos) de la forma: dS/dt = -β(SI/N) | 
 dI/dt = β(SI/N) - (γ+µ)I | dR/dt = γI | dD/dt = µI; con condiciones iniciales: S(0) = 997; I(0) = 3; R(0) = 0; D(0) = 0; con los
 parametros: β = 4, γ = 0.035; µ = 0.005; N = S(t) + I(t); para un intervalo de tiempo: 0 < t < 100. Metodo de solución: Heun
+
+-- Punto 7 --
+
+Pendulo simple con y sin friccion solucionado a través del algoritmo de Verlet.
+
+# Ecuaciones diferenciales en derivadas parciales.
+
+-- Punto 1 --
+
+Ecuacion de difución de calor
+
+-- Punto 2 --
+
+Ecuación de difución de calor en una barra
+
+-- Punto 3 --
+
+Ecuación de onda para una cuerda de extremos fijos
+
+-- Punto 4 --
+
+Ecuación de onda para una cuerda con un extremo libre.
+
+-- Punto 5 --
+
+Ecuación de onda para una cuerda oscilante con sus extremos fijos.
