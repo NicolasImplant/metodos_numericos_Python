@@ -10,7 +10,6 @@ def integral(N):
   h = (b-a)/(N-1)
   x = a
   area = 0
-  A = []
   for i in range(N):
     area += (h/2)*(f(x)+f(x+h))
     x += h
