@@ -24,6 +24,7 @@ class ODEMethod(StrEnum):
     HEUN = "heun"
     MIDPOINT = "midpoint"
     VERLET = "verlet"
+    DOUBLE_PENDULUM_VERLET = "double_pendulum_verlet"
 
 
 class PDEMethod(StrEnum):

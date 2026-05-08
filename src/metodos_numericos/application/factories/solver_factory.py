@@ -8,6 +8,7 @@ from ...infrastructure.solvers.integral.trapezoidal import TrapezoidalSolver
 from ...infrastructure.solvers.ode.heun import HeunSolver
 from ...infrastructure.solvers.ode.midpoint import MidpointSolver
 from ...infrastructure.solvers.ode.runge_kutta4 import RungeKutta4Solver
+from ...infrastructure.solvers.ode.double_pendulum_verlet import DoublePendulumVerletSolver
 from ...infrastructure.solvers.ode.verlet import VerletSolver
 from ...infrastructure.solvers.pde.explicit_euler_heat import ExplicitEulerHeatSolver
 from ...infrastructure.solvers.pde.wave_equation import WaveEquationSolver
@@ -42,6 +43,8 @@ class SolverFactory:
                 return MidpointSolver()
             case ODEMethod.VERLET:
                 return VerletSolver()
+            case ODEMethod.DOUBLE_PENDULUM_VERLET:
+                return DoublePendulumVerletSolver()
             case _:
                 raise ValueError(f"Unknown ODE method: {method!r}")
 

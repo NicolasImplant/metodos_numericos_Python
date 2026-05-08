@@ -63,6 +63,41 @@ def _pendulum_friction(t: float, y: NDArray[np.float64]) -> NDArray[np.float64]:
     return np.array([omega, -(g / l) * np.sin(theta) - (k / m) * omega])
 
 
+def _double_pendulum(t: float, y: NDArray[np.float64]) -> NDArray[np.float64]:
+    """
+    Double pendulum equations of motion derived from the Euler-Lagrange equations.
+
+    State:  y = [theta_1, theta_2, omega_1, omega_2]
+    Returns:    [omega_1, omega_2, alpha_1, alpha_2]
+
+    Parameters: m1=m2=1 kg, L1=L2=1 m, g=9.81 m/s^2.
+
+    Denominador: denom = 2*m1 + m2 - m2*cos(2*(theta1 - theta2))
+    """
+    theta1, theta2, omega1, omega2 = y[0], y[1], y[2], y[3]
+    m1, m2, L1, L2, g = 1.0, 1.0, 1.0, 1.0, 9.81
+    delta = theta1 - theta2
+    denom = 2.0 * m1 + m2 - m2 * np.cos(2.0 * delta)
+
+    alpha1 = (
+        -g * (2.0 * m1 + m2) * np.sin(theta1)
+        - m2 * g * np.sin(theta1 - 2.0 * theta2)
+        - 2.0 * np.sin(delta) * m2 * (omega2**2 * L2 + omega1**2 * L1 * np.cos(delta))
+    ) / (L1 * denom)
+
+    alpha2 = (
+        2.0
+        * np.sin(delta)
+        * (
+            omega1**2 * L1 * (m1 + m2)
+            + g * (m1 + m2) * np.cos(theta1)
+            + omega2**2 * L2 * m2 * np.cos(delta)
+        )
+    ) / (L2 * denom)
+
+    return np.array([omega1, omega2, alpha1, alpha2])
+
+
 ODE_PROBLEMS: dict[int, ODEProblem] = {
     1: ODEProblem(
         name="Lotka-Volterra (cazador-presa) — RK4",
@@ -119,5 +154,13 @@ ODE_PROBLEMS: dict[int, ODEProblem] = {
         t_start=0.0,
         t_end=10.0,
         state_labels=["θ (posición angular)", "ω (velocidad angular)"],
+    ),
+    8: ODEProblem(
+        name="Péndulo doble caótico — Velocity Verlet",
+        system=_double_pendulum,
+        initial_conditions=np.array([np.pi / 2, np.pi / 2, 0.0, 0.0]),
+        t_start=0.0,
+        t_end=30.0,
+        state_labels=["θ₁", "θ₂", "ω₁", "ω₂"],
     ),
 }

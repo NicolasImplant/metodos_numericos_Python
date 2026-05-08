@@ -54,6 +54,9 @@ class MatplotlibVisualizer(VisualizerPort):
         self._show_or_save(fig, save_path)
 
     def plot_ode(self, result: ODEResult, save_path: Path | None = None) -> None:
+        if "x2" in result.metadata:
+            self._plot_double_pendulum(result, save_path)
+            return
         n_states = result.states.shape[1]
         cols = min(n_states, 3)
         rows = (n_states + cols - 1) // cols + 1  # extra row for phase portrait
@@ -87,6 +90,73 @@ class MatplotlibVisualizer(VisualizerPort):
             ax_3d.set_ylabel(result.state_labels[1])
             ax_3d.set_zlabel(result.state_labels[2])  # type: ignore[attr-defined]
             ax_3d.set_title("Espacio de fases 3D")
+
+        fig.tight_layout()
+        self._show_or_save(fig, save_path)
+
+    def _plot_double_pendulum(self, result: ODEResult, save_path: Path | None = None) -> None:
+        meta = result.metadata
+        x2, y2 = meta["x2"], meta["y2"]
+        energy = meta["energy"]
+        t = result.time
+        th1, th2 = result.states[:, 0], result.states[:, 1]
+        om1, om2 = result.states[:, 2], result.states[:, 3]
+
+        fig = plt.figure(figsize=(16, 10))
+        fig.suptitle(f"{result.problem_name}\nMétodo: {result.method_name}", fontsize=12)
+
+        # Trajectory of bob 2 (Cartesian)
+        ax_traj = fig.add_subplot(2, 3, 1)
+        ax_traj.plot(x2, y2, "b-", linewidth=0.4, alpha=0.7)
+        ax_traj.set_xlabel("x₂ (m)")
+        ax_traj.set_ylabel("y₂ (m)")
+        ax_traj.set_title("Trayectoria del segundo bob")
+        ax_traj.set_aspect("equal")
+        ax_traj.grid(True, alpha=0.3)
+
+        # Angular positions vs time
+        ax_ang = fig.add_subplot(2, 3, 2)
+        ax_ang.plot(t, th1, "b-", linewidth=0.8, label="θ₁", alpha=0.85)
+        ax_ang.plot(t, th2, "r-", linewidth=0.8, label="θ₂", alpha=0.85)
+        ax_ang.set_xlabel("Tiempo (s)")
+        ax_ang.set_ylabel("Ángulo (rad)")
+        ax_ang.set_title("Posiciones angulares")
+        ax_ang.legend(fontsize=8)
+        ax_ang.grid(True, alpha=0.3)
+
+        # Energy conservation
+        ax_energy = fig.add_subplot(2, 3, 3)
+        e0 = energy[0]
+        rel_drift = (energy - e0) / abs(e0) if abs(e0) > 1e-12 else energy - e0
+        ax_energy.plot(t, rel_drift, "g-", linewidth=0.8)
+        ax_energy.set_xlabel("Tiempo (s)")
+        ax_energy.set_ylabel("ΔE / E₀")
+        ax_energy.set_title("Deriva de energía (conservación)")
+        ax_energy.grid(True, alpha=0.3)
+
+        # Phase portrait θ₁ vs ω₁
+        ax_ph1 = fig.add_subplot(2, 3, 4)
+        ax_ph1.plot(th1, om1, "b-", linewidth=0.4, alpha=0.7)
+        ax_ph1.set_xlabel("θ₁ (rad)")
+        ax_ph1.set_ylabel("ω₁ (rad/s)")
+        ax_ph1.set_title("Retrato de fase — péndulo 1")
+        ax_ph1.grid(True, alpha=0.3)
+
+        # Phase portrait θ₂ vs ω₂
+        ax_ph2 = fig.add_subplot(2, 3, 5)
+        ax_ph2.plot(th2, om2, "r-", linewidth=0.4, alpha=0.7)
+        ax_ph2.set_xlabel("θ₂ (rad)")
+        ax_ph2.set_ylabel("ω₂ (rad/s)")
+        ax_ph2.set_title("Retrato de fase — péndulo 2")
+        ax_ph2.grid(True, alpha=0.3)
+
+        # Poincaré-style: ω₁ vs ω₂
+        ax_om = fig.add_subplot(2, 3, 6)
+        ax_om.plot(om1, om2, "k-", linewidth=0.3, alpha=0.5)
+        ax_om.set_xlabel("ω₁ (rad/s)")
+        ax_om.set_ylabel("ω₂ (rad/s)")
+        ax_om.set_title("Velocidades angulares (ω₁ vs ω₂)")
+        ax_om.grid(True, alpha=0.3)
 
         fig.tight_layout()
         self._show_or_save(fig, save_path)

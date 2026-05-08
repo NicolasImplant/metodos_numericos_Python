@@ -11,6 +11,7 @@ from metodos_numericos.infrastructure.solvers.ode.runge_kutta4 import RungeKutta
 from metodos_numericos.infrastructure.solvers.ode.heun import HeunSolver
 from metodos_numericos.infrastructure.solvers.ode.midpoint import MidpointSolver
 from metodos_numericos.infrastructure.solvers.ode.verlet import VerletSolver
+from metodos_numericos.infrastructure.solvers.ode.double_pendulum_verlet import DoublePendulumVerletSolver
 from metodos_numericos.infrastructure.solvers.pde.explicit_euler_heat import ExplicitEulerHeatSolver
 from metodos_numericos.infrastructure.solvers.pde.wave_equation import WaveEquationSolver
 
@@ -29,6 +30,7 @@ def test_integral_factory(method: IntegralMethod, expected_type: type) -> None:
     (ODEMethod.HEUN, HeunSolver),
     (ODEMethod.MIDPOINT, MidpointSolver),
     (ODEMethod.VERLET, VerletSolver),
+    (ODEMethod.DOUBLE_PENDULUM_VERLET, DoublePendulumVerletSolver),
 ])
 def test_ode_factory(method: ODEMethod, expected_type: type) -> None:
     solver = SolverFactory.create_ode_solver(method)

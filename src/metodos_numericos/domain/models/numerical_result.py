@@ -23,6 +23,7 @@ class ODEResult:
     state_labels: tuple[str, ...]
     method_name: str = ""
     problem_name: str = ""
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def get_state(self, label: str) -> NDArray[np.float64]:
         idx = self.state_labels.index(label)
