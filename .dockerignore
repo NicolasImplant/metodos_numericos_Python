@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.git/
+output/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+Ecuaciones_diferenciales/
+Ecuaciones_diferenciales_derivadas_parciales/
+Integrales/

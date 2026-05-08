@@ -1,0 +1,79 @@
+services:
+  # ── Run a specific problem ─────────────────────────────────────────────────
+  solver:
+    build:
+      context: .
+      target: app
+    env_file: .env
+    volumes:
+      - ./output:/app/output
+    # Override any variable on the CLI:
+    #   docker compose run solver -e NM_PROBLEM_TYPE=integral -e NM_PROBLEM_ID=4
+
+  # ── Lotka-Volterra (ODE 1) with RK4 ───────────────────────────────────────
+  lotka-volterra:
+    build:
+      context: .
+      target: app
+    environment:
+      NM_PROBLEM_TYPE: ode
+      NM_PROBLEM_ID: "1"
+      NM_ODE_METHOD: runge_kutta4
+      NM_NUM_STEPS: "10000"
+      NM_VISUALIZATION_BACKEND: file
+      NM_OUTPUT_DIR: /app/output
+      NM_LOG_LEVEL: INFO
+    volumes:
+      - ./output:/app/output
+
+  # ── Lorenz attractor (ODE 3) with Midpoint ────────────────────────────────
+  lorenz:
+    build:
+      context: .
+      target: app
+    environment:
+      NM_PROBLEM_TYPE: ode
+      NM_PROBLEM_ID: "3"
+      NM_ODE_METHOD: midpoint
+      NM_NUM_STEPS: "50000"
+      NM_VISUALIZATION_BACKEND: file
+      NM_OUTPUT_DIR: /app/output
+    volumes:
+      - ./output:/app/output
+
+  # ── Simpson integral (Integral 1) ─────────────────────────────────────────
+  integral-simpson:
+    build:
+      context: .
+      target: app
+    environment:
+      NM_PROBLEM_TYPE: integral
+      NM_PROBLEM_ID: "1"
+      NM_INTEGRAL_METHOD: simpson
+      NM_NUM_STEPS: "200"
+      NM_VISUALIZATION_BACKEND: file
+      NM_OUTPUT_DIR: /app/output
+    volumes:
+      - ./output:/app/output
+
+  # ── Heat diffusion PDE ────────────────────────────────────────────────────
+  heat-pde:
+    build:
+      context: .
+      target: app
+    environment:
+      NM_PROBLEM_TYPE: pde
+      NM_PROBLEM_ID: "1"
+      NM_PDE_METHOD: explicit_euler_heat
+      NM_VISUALIZATION_BACKEND: file
+      NM_OUTPUT_DIR: /app/output
+    volumes:
+      - ./output:/app/output
+
+  # ── Test suite ────────────────────────────────────────────────────────────
+  tests:
+    build:
+      context: .
+      target: test
+    volumes:
+      - ./output:/app/output
